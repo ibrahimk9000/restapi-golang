@@ -1,4 +1,4 @@
-module github.com/k8-proxy/k8-go-api
+module github.com/ibrahimk9000/restapi-golang
 
 go 1.14
 

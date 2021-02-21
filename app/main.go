@@ -86,9 +86,9 @@ func main() {
 	mx := mux.NewRouter()
 	mx.Use(customMiddleware)
 
-	mx.HandleFunc("/api/rebuild/file", rebuildfile).Methods("POST")
-	mx.HandleFunc("/api/rebuild/zip", rebuildzip).Methods("POST")
-	mx.HandleFunc("/api/rebuild/base64", rebuildbase64).Methods("POST")
+	mx.HandleFunc("/api", Get).Methods("GET")
+	mx.HandleFunc("/api", Post).Methods("POST")
+	mx.HandleFunc("/api", Put).Methods("POST")
 	//mx.HandleFunc("/api/rebuild/s3tos3", rebuilds3tos3).Methods("POST")
 
 	fmt.Println("Server is ready to handle requests at port 8100")

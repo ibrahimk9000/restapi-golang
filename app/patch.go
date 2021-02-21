@@ -7,16 +7,7 @@ import (
 	"net/http"
 )
 
-type req struct {
-	Base64                 string `json:"Base64"`
-	ContentManagementFlags struct {
-		PdfContentManagement struct {
-			Metadata int `json:"Metadata"`
-		} `json:"PdfContentManagement"`
-	} `json:"ContentManagementFlags"`
-}
-
-func rebuildzip(w http.ResponseWriter, r *http.Request) {
+func Patch(w http.ResponseWriter, r *http.Request) {
 
 	//m max 5 MB file name we can change ut
 	r.ParseMultipartForm(5 << 20)
