@@ -39,11 +39,11 @@ func addgwheader(w http.ResponseWriter, v gwcustomheader) {
 
 func main() {
 	mx := mux.NewRouter()
-	mx.Use(customMiddleware)
+	mx.Use(Logmiddleware, AuthMiddleware)
 
 	mx.HandleFunc("/api", Get).Methods("GET")
 	mx.HandleFunc("/api", Post).Methods("POST")
-	mx.HandleFunc("/api", Put).Methods("POST")
+	mx.HandleFunc("/api", Put).Methods("PUT")
 	//mx.HandleFunc("/api/rebuild/s3tos3", rebuilds3tos3).Methods("POST")
 
 	fmt.Println("Server is ready to handle requests at port 8100")
