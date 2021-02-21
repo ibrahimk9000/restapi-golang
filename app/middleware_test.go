@@ -80,7 +80,7 @@ func middlewareconnect(hk, hv string) (int, string) {
 		io.WriteString(w, "autorization succeful")
 	})
 
-	ts := httptest.NewServer(customMiddleware(endpoint))
+	ts := httptest.NewServer(AuthMiddleware(endpoint))
 
 	client := &http.Client{}
 
