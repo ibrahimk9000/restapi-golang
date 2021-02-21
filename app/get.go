@@ -8,11 +8,6 @@ import (
 	"net/http"
 )
 
-type Base64Json struct {
-	Base64                    string                    `json:"Base64"`
-	ContentManagementFlagJSON ContentManagementFlagJson `json:"ContentManagementFlagJson"`
-}
-
 func Get(w http.ResponseWriter, r *http.Request) {
 
 	//m max 5 MB file name we can change ut

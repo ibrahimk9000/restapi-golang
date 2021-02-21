@@ -42,7 +42,7 @@ type RebuildUrl struct {
 	ContentManagementFlagJson ContentManagementFlagJson `json:"ContentManagementFlagJson"`
 }
 
-func rebuildfile(w http.ResponseWriter, r *http.Request) {
+func Post(w http.ResponseWriter, r *http.Request) {
 
 	//m max 5 MB file name we can change ut
 	r.ParseMultipartForm(5 << 20)
