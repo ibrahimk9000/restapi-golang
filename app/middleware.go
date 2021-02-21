@@ -1,66 +1,51 @@
 package main
 
 import (
-	"encoding/base64"
-	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
-func Middleware(w http.ResponseWriter, r *http.Request) {
+//there will middleware chain here
+func customMiddleware(next http.Handler) http.Handler {
 
-	//m max 5 MB file name we can change ut
-	r.ParseMultipartForm(5 << 20)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-	base64enc := r.Body
+		errauth := "you don't have  valid authoriaztion token"
+		erremptyauth := "you didn't provide authoriaztion token"
 
-	defer base64enc.Close()
+		//log about request
+		//there will be logging middleware soon
+		log.Printf("method: %v\n", r.Method)
+		log.Printf("URL: %v\n", r.URL)
+		log.Printf("RemoteAddr: %v\n", r.RemoteAddr)
+		log.Printf("Host: %v\n", r.Host)
+		log.Printf("Content-Type: %v\n", r.Header.Get("Content-Type"))
+		log.Printf("RequestURI: %v\n", r.RequestURI)
 
-	cont, err := ioutil.ReadAll(base64enc)
-	if err != nil {
-		log.Println("ioutilReadAll", err)
-		http.Error(w, "empty or malformed request body", http.StatusBadRequest)
+		//Authorization: Bearer
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			http.Error(w, erremptyauth, http.StatusUnauthorized)
 
-		return
-	}
+			return
+		}
 
-	var mp map[string]json.RawMessage
+		authHeaderParts := strings.Fields(authHeader)
 
-	err = json.Unmarshal(cont, &mp)
-	if err != nil {
-		log.Println("unmarshal json", err)
-		http.Error(w, "malformed json format", http.StatusBadRequest)
+		if len(authHeaderParts) != 2 || authHeaderParts[0] != "Bearer" {
+			http.Error(w, errauth, http.StatusUnauthorized)
 
-		return
-	}
+			return
+		}
 
-	var str string
-	err = json.Unmarshal(mp["Base64"], &str)
-	if err != nil {
-		log.Println("unmarshal json base64", err)
-		http.Error(w, "malformed json format ", http.StatusBadRequest)
+		if authHeaderParts[1] != "mysecrettoken" {
 
-		return
-	}
+			http.Error(w, errauth, http.StatusUnauthorized)
 
-	buf, err := base64.StdEncoding.DecodeString(str)
-	if err != nil {
-		log.Println("base64 decoding", err)
-		http.Error(w, "malformed base64 encoding", http.StatusBadRequest)
-		return
+			return
+		}
 
-	}
-
-	log.Printf("%v\n", http.DetectContentType(buf))
-
-	//glasswall custom header
-	addgwheader(w, temp)
-
-	_, e := w.Write(buf)
-	if e != nil {
-		log.Println(e)
-
-	}
-
+		next.ServeHTTP(w, r)
+	})
 }
